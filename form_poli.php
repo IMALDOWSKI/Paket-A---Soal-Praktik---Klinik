@@ -1,5 +1,6 @@
 <?php
 include 'koneksi.php';
+include 'generate_id.php';
 
 // Handle delete
 if (isset($_GET['delete'])) {
@@ -26,6 +27,9 @@ if (isset($_GET['edit'])) {
         $row = mysqli_fetch_assoc($result);
         $nama = $row['Nama_Poli'];
     }
+} else if (isset($_GET['add'])) {
+    // Auto-generate ID for new entry
+    $edit_id = generateNextID('PL', 'Poli', 'Poli_ID');
 }
 
 // Handle form submission
@@ -78,7 +82,7 @@ $result = mysqli_query($conn, $query);
             <form method="POST" action="">
                 <div class="form-group">
                     <label>📋 Poli_ID</label>
-                    <input type="text" name="id" value="<?php echo $edit_id; ?>" <?php echo $is_edit ? 'readonly' : ''; ?> placeholder="Masukkan ID poli" required>
+                    <input type="text" name="id" value="<?php echo $edit_id; ?>" readonly placeholder="ID otomatis" required>
                 </div>
                 <div class="form-group">
                     <label>🏥 Nama Poli</label>

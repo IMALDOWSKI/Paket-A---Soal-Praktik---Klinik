@@ -1,5 +1,6 @@
 <?php
 include 'koneksi.php';
+include 'generate_id.php';
 
 // Arrays for date components
 $bulan_array = array(
@@ -49,6 +50,9 @@ if (isset($_GET['edit'])) {
         $selected_bulan = date_format($tanggal_obj, 'n');
         $tahun = date_format($tanggal_obj, 'Y');
     }
+} else {
+    // Auto-generate ID for new entry
+    $no_transaksi = generateNextID('TR', 'Berobat', 'No_Transaksi');
 }
 
 // Handle form submission
@@ -133,7 +137,7 @@ $dokter_result = mysqli_query($conn, $dokter_query);
             <form method="POST" action="">
                 <div class="form-group">
                     <label>📋 No Transaksi</label>
-                    <input type="text" name="no_transaksi" value="<?php echo $no_transaksi; ?>" <?php echo $is_edit ? 'readonly' : ''; ?> placeholder="Masukkan nomor transaksi" required>
+                    <input type="text" name="no_transaksi" value="<?php echo $no_transaksi; ?>" readonly placeholder="ID otomatis" required>
                 </div>
                 
                 <div class="form-group">

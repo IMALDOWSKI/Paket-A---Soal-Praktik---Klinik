@@ -1,5 +1,6 @@
 <?php
 include 'koneksi.php';
+include 'generate_id.php';
 
 // Handle delete
 if (isset($_GET['delete'])) {
@@ -32,6 +33,9 @@ if (isset($_GET['edit'])) {
         $jenis_kelamin = $row['Jenis_KelaminPasien'];
         $alamat = $row['Alamat_Pasien'];
     }
+} else if (isset($_GET['add'])) {
+    // Auto-generate ID for new entry
+    $edit_id = generateNextID('PS', 'Pasien', 'PasienKlinik_ID');
 }
 
 // Handle form submission
@@ -100,7 +104,7 @@ function hitungUsia($tanggal_lahir) {
             <form method="POST" action="">
                 <div class="form-group">
                     <label>📋 PasienKlinik_ID</label>
-                    <input type="text" name="id" value="<?php echo $edit_id; ?>" <?php echo $is_edit ? 'readonly' : ''; ?> placeholder="Masukkan ID pasien" required>
+                    <input type="text" name="id" value="<?php echo $edit_id; ?>" readonly placeholder="ID otomatis" required>
                 </div>
                 <div class="form-group">
                     <label>👤 Nama Pasien</label>
