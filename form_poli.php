@@ -2,13 +2,28 @@
 include 'koneksi.php';
 include 'generate_id.php';
 
+$delete_error = '';
+
 // Handle delete
 if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $delete_query = "DELETE FROM Poli WHERE Poli_ID = '$id'";
-    mysqli_query($conn, $delete_query);
-    header("Location: form_poli.php");
-    exit();
+    $id = (string) $_GET['delete'];
+    $check_query = $conn->prepare("SELECT COUNT(*) FROM Dokter WHERE Poli_ID = ?");
+    $check_query->bind_param('s', $id);
+    $check_query->execute();
+    $check_query->bind_result($dokter_count);
+    $check_query->fetch();
+    $check_query->close();
+
+    if ($dokter_count > 0) {
+        $delete_error = "Poli tidak dapat dihapus karena masih digunakan oleh {$dokter_count} dokter. Ubah poli dokter terlebih dahulu.";
+    } else {
+        $delete_query = $conn->prepare("DELETE FROM Poli WHERE Poli_ID = ?");
+        $delete_query->bind_param('s', $id);
+        $delete_query->execute();
+        $delete_query->close();
+        header("Location: form_poli.php");
+        exit();
+    }
 }
 
 // Handle Edit mode
@@ -94,6 +109,12 @@ $result = mysqli_query($conn, $query);
                     <a href="form_poli.php" class="btn" style="background: #6c757d; color: white;">❌ Batal</a>
                 </div>
             </form>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($delete_error !== ''): ?>
+        <div style="background: #f8d7da; color: #842029; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <?php echo htmlspecialchars($delete_error, ENT_QUOTES, 'UTF-8'); ?>
         </div>
         <?php endif; ?>
         
